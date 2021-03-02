@@ -15,8 +15,8 @@
 - Board Write, Read, Modify
 - Board File Upload (Use Axios, MultiPart)
 
-3.Development Schedule
+3. Development Schedule
 - DB System Build for Board Files (Value Object / DB Table Design)
 - Insert Board Files Data at the same time file upload
 - Insert Board Info Data and Board Files Data
-- User Acoount System Build ( 
+- User Acoount System Build (TBD)
