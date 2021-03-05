@@ -1,11 +1,8 @@
 package com.board.back.controller;
 
-import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.board.back.model.Board;
 import com.board.back.service.BoardService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController // @ResponsBody가 결합된 형태로 Json 형태의 객체 데이터를 반환하는 컨트롤러 (View를 반환하는것이 아님)
@@ -48,8 +46,27 @@ public class BoardController {
 	
 	// create board
 	@PostMapping("/board")
-	public Board createBoard(@RequestBody Board board) {
-		return boardService.createBoard(board);
+//	public Board createBoard(@RequestBody Board board) { // 게시글 정보만 받아 처리하는 경우
+	public Board createBoard(@RequestPart ("board") String board, @RequestPart (value="files") List<MultipartFile> files)  {
+		// multipart로 받은 board 객체 데이터가 json 타입이기 때문에 변환 작업을 위한 ObjectMapper 객체 선언
+		ObjectMapper objectMapper = new ObjectMapper();
+		Board tmp = new Board();
+				
+		try {
+			// Json 타입으로 들어온 값을 Board 객체 형식에 맞추어 생성
+			// 리턴은 Board 객체 타입으로
+			tmp = objectMapper.readValue(board, Board.class);
+			
+			// 게시판 생성 
+			Board returnBoard = boardService.createBoard(tmp);
+			// 게시판 생성 후 게시글 번호에 따른 파일 저장
+			boardService.uploadFile(returnBoard.getNo(), files);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return tmp;
 	}
 	
 	// read board
@@ -70,31 +87,32 @@ public class BoardController {
 		return boardService.deleteBoard(no);
 	}
 	
-	// file upload
+	// async file upload test
 	@PostMapping("/board/uploadFile")
 	public Map<String, Object> upload(@RequestPart(value="files", required=true) List<MultipartFile> files) {
+		
+		boardService.uploadFile(1, files);
+		
 //		File newFile = new File("c:/boardFile/" + multiPartFile.getOriginalFilename());
 	
-		try {
-		    for(MultipartFile file : files) {
-		        String originalName = file.getOriginalFilename();
-		        
-		        String filePath = "c:/boardFile/" + originalName;
-		        File dest = new File(filePath);
-		        if(dest.isDirectory()) dest.mkdir();
-		        file.transferTo(dest);
-		        
-		        String uid = UUID.randomUUID().toString();
-		    }
+//		try {
+//		    for(MultipartFile file : files) {
+//		        String originalName = file.getOriginalFilename();
+//		        
+//		        String filePath = "c:/boardFile/" + originalName;
+//		        File dest = new File(filePath);
+//		        if(dest.isDirectory()) dest.mkdir();
+//		        file.transferTo(dest);
+//		    }
 		    
 //			InputStream fileStream = multiPartFile.getInputStream();
 //			FileUtils.copyInputStreamToFile(fileStream, newFile);
 			
-		} catch (Exception e) {
+//		} catch (Exception e) {
 			// 실패 시 파일 삭제 처리
 //			FileUtils.deleteQuietly(dest);
-			e.printStackTrace();
-		}
+//			e.printStackTrace();
+//		}
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("errorCode", 10);

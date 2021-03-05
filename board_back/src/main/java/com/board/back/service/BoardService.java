@@ -1,16 +1,22 @@
 package com.board.back.service;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.board.back.exception.ResourceNotFoundException;
 import com.board.back.model.Board;
+import com.board.back.model.BoardFile;
+import com.board.back.repository.BoardFileRepository;
 import com.board.back.repository.BoardRepository;
 import com.board.back.util.PagingUtil;
 
@@ -19,6 +25,9 @@ public class BoardService {
 
 	@Autowired
 	private BoardRepository boardRepository;
+	
+	@Autowired
+	private BoardFileRepository boardFileRepository;
 	
 	public int findAllCount() {
 		return (int) boardRepository.count();
@@ -85,6 +94,38 @@ public class BoardService {
 		response.put("Delete Board Data by Id : [" + no + "]", Boolean.TRUE);
 		
 		return ResponseEntity.ok(response);	
+	}
+	
+	// uploadFile with BoardNo
+	public ResponseEntity<List<BoardFile>> uploadFile(Integer no, List<MultipartFile> files) {
+		List<BoardFile> bf = new ArrayList<>();
+		
+		try {
+			for (MultipartFile file : files) {
+		        String originalName = file.getOriginalFilename();
+		        
+		        String filePath = "c:/boardFile/" + originalName;
+		        File dest = new File(filePath);
+		        if(dest.isDirectory()) dest.mkdir();
+		        file.transferTo(dest);
+				
+				BoardFile tmp = new BoardFile();
+				
+				tmp.setBoardNo(no);
+				tmp.setOriName(file.getOriginalFilename());
+				tmp.setNewName(UUID.randomUUID().toString());
+				tmp.setSize(file.getSize());
+				
+				boardFileRepository.save(tmp);
+				
+				bf.add(tmp);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return ResponseEntity.ok(bf);
+		
 	}
 
 }
