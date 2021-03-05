@@ -48,17 +48,39 @@ class CreateBoardComponent extends Component {
             contents: this.state.contents,
             memberNo: this.state.memberNo
         };
-        console.log("board => "+ JSON.stringify(board));
-        if(this.state.no === '_create') {
-            BoardService.createBoard(board).then(res => {
-                this.props.history.push('/board');
-            });            
-        } else {
-            BoardService.updateBoard(this.state.no, board).then(res => {
-                this.props.history.push('/board');
-            });
 
+        const formData = new FormData();
+
+        for (let i = 0; i < this.state.selectedFiles.length; i++) {
+            formData.append("files", this.state.selectedFiles[i]);
         }
+
+        formData.append("board", JSON.stringify(board));
+
+        const config = {
+            headers: {
+              "content-type": "multipart/form-data"
+            }
+          };
+
+        if(this.state.no === '_create') {
+            BoardService.createBoardWithFile(formData,config);
+        } else {
+            BoardService.updateBoardWithFile(this.state.no, formData, config);            
+        }
+
+        // 게시글만 등록하는 기준
+        // console.log("board => "+ JSON.stringify(board));
+        // if(this.state.no === '_create') {
+        //     BoardService.createBoard(board).then(res => {
+        //         this.props.history.push('/board');
+        //     });            
+        // } else {
+        //     BoardService.updateBoard(this.state.no, board).then(res => {
+        //         this.props.history.push('/board');
+        //     });
+
+        // }
     }
 
     cancel() {

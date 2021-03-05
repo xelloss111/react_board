@@ -30,6 +30,14 @@ class BoardService {
     uploadFile(path, formData, config) {
         return axios.post(BOARD_API_BASE_URL + "/" + path, formData, config);
     }
+    
+    createBoardWithFile(formData, config) {
+        return axios.post(BOARD_API_BASE_URL + "/" , formData, config);
+    }
+    
+    updateBoardWithFile(no, formData, config) {
+        return axios.post(BOARD_API_BASE_URL + "/" , no, formData, config);
+    }
 }
 
 export default new BoardService();
