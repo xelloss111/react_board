@@ -38,6 +38,10 @@ class BoardService {
     updateBoardWithFile(no, formData, config) {
         return axios.post(BOARD_API_BASE_URL + "/" , no, formData, config);
     }
+
+    getFileInfo(no) {
+        return axios.get(BOARD_API_BASE_URL + "/file/" + no);
+    }
 }
 
 export default new BoardService();

@@ -7,7 +7,8 @@ class ReadBoardComponent extends Component {
 
         this.state = { 
             no: this.props.match.params.no,
-            board: {}
+            board: {},
+            files : []
         }
 
     }
@@ -16,6 +17,10 @@ class ReadBoardComponent extends Component {
         BoardService.getOneBoard(this.state.no).then(res => {
             this.setState({board: res.data});
         });
+
+        BoardService.getFileInfo(this.state.no).then(res => {
+            this.setState({files: res.data.fileList});
+        });        
     }
 
     returnBoardType(typeNo) {
@@ -90,7 +95,17 @@ class ReadBoardComponent extends Component {
                                 {this.state.board.memberNo}
                             </div>
 
+                            <h3>첨부파일</h3> 
+                            {
+                                this.state.files.map(
+                                    bFile =>
+                                    <div>{bFile.fileNo} : {bFile.oriName}</div>                                     
+                                )
+                            }
+
                             {this.returnDate(this.state.board.createdTime, this.state.board.updatedTime) }
+
+                            
                             <button className="btn btn-primary" onClick={this.goToList.bind(this)} style={{marginLeft:"10px"}}>글 목록으로 이동</button>
                             <button className="btn btn-info" onClick={this.goToUpdate} style={{marginLeft:"10px"}}>글 수정</button>
                             <button className="btn btn-danger" onClick={() => this.deleteView()} style={{marginLeft:"10px"}}>글 삭제</button>
