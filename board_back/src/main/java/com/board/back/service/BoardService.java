@@ -127,5 +127,16 @@ public class BoardService {
 		return ResponseEntity.ok(bf);
 		
 	}
+	
+	// get file info (List Type)
+	public ResponseEntity<Map> getFileInfo (Integer no) {
+		Map newList = new HashMap<>();
+		
+		List<BoardFile> list = boardFileRepository.findByBoardNo(no);
+		
+		newList.put("fileList", list);
+		
+		return ResponseEntity.ok(newList);
+	}
 
 }

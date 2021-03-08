@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.board.back.model.Board;
+import com.board.back.model.BoardFile;
 import com.board.back.service.BoardService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -117,9 +118,13 @@ public class BoardController {
 		Map<String, Object> map = new HashMap<>();
 		map.put("errorCode", 10);
 		
-		return map;
-		
-		
+		return map;	
+	}
+	
+	// read board
+	@GetMapping("/board/file/{no}")
+	public ResponseEntity<Map> getBoardFileByNo (@PathVariable Integer no) {
+		return boardService.getFileInfo(no);
 	}
 	
 }
