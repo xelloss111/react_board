@@ -1,10 +1,17 @@
 package com.board.back.controller;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -127,4 +135,45 @@ public class BoardController {
 		return boardService.getFileInfo(no);
 	}
 	
+	// file donwload
+	@GetMapping("/board/file/download/{no}")
+	@ResponseBody
+	public ResponseEntity<Resource> downloadFile(@PathVariable Integer no) throws Exception {
+		// 경로 상의 파일을 직접 다운로드 하는 방법
+		BoardFile fileInfo = boardService.getFileOne(no);
+		Path path = Paths.get("c:/boardFile/" + fileInfo.getOriName());
+		String contentType = Files.probeContentType(path);
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, contentType);
+
+		Resource resource = new InputStreamResource(Files.newInputStream(path));
+		
+		return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+		
+//		System.out.println("download");
+//		BoardFile fileInfo = boardService.getFileOne(no);
+//		File target = new File("c:/boardFile/" + fileInfo.getOriName());
+//		HttpHeaders header = new HttpHeaders();
+//		Resource rs = null;
+//		
+//		if(target.exists()) {
+//			try {
+//					String mimeType = Files.probeContentType(Paths.get(target.getAbsolutePath()));
+//					System.out.println(mimeType);
+//					if(mimeType == null) {
+//						mimeType = "octet-stream";
+//					}
+//					rs = new UrlResource(target.toURI());
+//					header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+ rs.getFilename() +"\"");
+//					header.setCacheControl("no-cache");
+////					header.setContentType(MediaType.parseMediaType(mimeType));
+//					header.setContentType(MediaType.parseMediaType(mimeType));
+//			}catch(Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		
+//		return new ResponseEntity<Resource>(rs, header, HttpStatus.OK);
+	}
 }

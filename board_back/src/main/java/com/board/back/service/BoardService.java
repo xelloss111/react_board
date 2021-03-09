@@ -138,5 +138,11 @@ public class BoardService {
 		
 		return ResponseEntity.ok(newList);
 	}
+	
+	// get file Info (One)
+	public BoardFile getFileOne (Integer no) {
+		BoardFile info = boardFileRepository.getOne(no);
+		return info;
+	}
 
 }
