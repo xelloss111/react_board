@@ -42,6 +42,10 @@ class BoardService {
     getFileInfo(no) {
         return axios.get(BOARD_API_BASE_URL + "/file/" + no);
     }
+
+    downloadFile(no) {
+        return axios.get(BOARD_API_BASE_URL + "/file/download/" + no);
+    }
 }
 
 export default new BoardService();

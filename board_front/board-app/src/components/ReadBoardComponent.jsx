@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import BoardService from '../service/BoardService';
+import axios from 'axios';
 
 class ReadBoardComponent extends Component {
     constructor(props) {
@@ -60,6 +61,26 @@ class ReadBoardComponent extends Component {
         this.props.history.push(`/create-board/${this.state.no}`);
     }
 
+    // 파일 다운로드 처리
+    // axios.get으로 그냥 보내버리면 결과를 받아 다운로드 했을 때 내용이 깨지게 된다.
+    // 따라서 axios로 전송할 때 responseType을 blob로 처리해주어야 한다.
+    downCsList(no, fileName){                
+        axios({
+            method: 'GET',
+            url: 'http://localhost:3030/api/board/file/download/'+ no,                 
+            responseType: 'blob' // 가장 중요함
+        })    
+        .then(response =>{        
+            const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+        })                                
+    }
+
+
     deleteView = async function() {
         if(window.confirm("정말로 글을 삭제하시겠습니까?\n삭제된 글은 복구할 수 없습니다.")) {
             BoardService.deleteBoard(this.state.no).then(res => {
@@ -99,7 +120,7 @@ class ReadBoardComponent extends Component {
                             {
                                 this.state.files.map(
                                     bFile =>
-                                    <div>{bFile.fileNo} : {bFile.oriName}</div>                                     
+                                    <div>{bFile.fileNo} : <a onClick={() => this.downCsList(bFile.fileNo, bFile.oriName)}>{bFile.oriName}</a></div>                                     
                                 )
                             }
 
