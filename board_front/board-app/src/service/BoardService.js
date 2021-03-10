@@ -46,6 +46,10 @@ class BoardService {
     downloadFile(no) {
         return axios.get(BOARD_API_BASE_URL + "/file/download/" + no);
     }
+
+    deleteFile(no) {
+        return axios.post(BOARD_API_BASE_URL + "/file/delete/" + no); 
+    }
 }
 
 export default new BoardService();

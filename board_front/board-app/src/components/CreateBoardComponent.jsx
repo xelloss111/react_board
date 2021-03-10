@@ -11,7 +11,8 @@ class CreateBoardComponent extends Component {
             title: '',
             contents: '',
             memberNo: '',
-            selectedFiles : null
+            selectedFiles : null,
+            files: []
         }
         // javascript의 bind() 를 활용하여 각 메소드 수행 시
         // this의 state를 가진채로 사용될 수 있도록 함
@@ -126,6 +127,16 @@ class CreateBoardComponent extends Component {
         // axios.post(`uploadAPI`, formData, config);
       };
 
+    getFile() {
+        if (this.state.no != '_create') {
+            return <h6>○ 기존파일정보</h6>
+        }        
+    }
+
+    deleteFile () {
+        
+    }
+
     componentDidMount() {
         if(this.state.no === '_create') {
             return;
@@ -141,6 +152,10 @@ class CreateBoardComponent extends Component {
                     memberNo : board.memberNo
                 });
             });
+
+            BoardService.getFileInfo(this.state.no).then(res => {
+                this.setState({files: res.data.fileList});
+            });        
         }
     }
 
@@ -177,10 +192,24 @@ class CreateBoardComponent extends Component {
                                         <input placeholder="memberNo" name="memberNo" className="form-control" 
                                         value={this.state.memberNo} onChange={this.changeMemberNoHandler}/>
                                     </div>
+
+                                    {/* 글 수정 시 파일 정보 출력 */}
+                                    {this.getFile()}
+                                    {
+                                        this.state.files.map(
+                                            bFile =>
+                                            <div>
+                                                {bFile.fileNo} : {bFile.oriName}
+                                                <a style={{marginLeft: "10px"}}>X</a>
+                                            </div>                                     
+                                        )
+                                    }
+                                    <br/>
+
                                     <div className = "form-group">
-                                        <label> File </label>
+                                        <label> File : &nbsp;</label>
                                         <input type="file" name="files" multiple onChange={this.selectFile} />
-                                        <button onClick={this.onClickHandler}>전송하기</button> 
+                                        {/* <button onClick={this.onClickHandler}>전송하기</button>  */}
                                     </div>
                                     <button className="btn btn-success" onClick={this.createBoard}>Save</button>
                                     <button className="btn btn-danger" onClick={this.cancel.bind(this)} style={{marginLeft:"10px"}}>Cancel</button>
