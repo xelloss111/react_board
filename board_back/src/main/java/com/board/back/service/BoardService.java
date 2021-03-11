@@ -144,5 +144,18 @@ public class BoardService {
 		BoardFile info = boardFileRepository.getOne(no);
 		return info;
 	}
+	
+	// file delete
+	public ResponseEntity<Map<String, Boolean>> deleteFile (Integer no) {
+		BoardFile board = boardFileRepository.findById(no).orElseThrow(() -> new ResourceNotFoundException("Not Exist Board Data by no" + no));
+		boardFileRepository.delete(board);
+		Map<String, Boolean> response = new HashMap<>();
+		response.put("Delete Board Data by Id : [" + no + "]", Boolean.TRUE);
+		
+		File file = new File("c:/boardFile/" + board.getOriName());
+		if(file.exists()) file.delete();
+		
+		return ResponseEntity.ok(response);			
+	}
 
 }

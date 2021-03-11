@@ -99,9 +99,6 @@ public class BoardController {
 	// async file upload test
 	@PostMapping("/board/uploadFile")
 	public Map<String, Object> upload(@RequestPart(value="files", required=true) List<MultipartFile> files) {
-		
-		boardService.uploadFile(1, files);
-		
 //		File newFile = new File("c:/boardFile/" + multiPartFile.getOriginalFilename());
 	
 //		try {
@@ -175,5 +172,10 @@ public class BoardController {
 //		}
 //		
 //		return new ResponseEntity<Resource>(rs, header, HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/board/file/delete/{no}")
+	public ResponseEntity<Map<String, Boolean>> deleteFile(@PathVariable Integer no) {
+		return boardService.deleteFile(no);
 	}
 }
