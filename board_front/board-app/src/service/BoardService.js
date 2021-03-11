@@ -48,7 +48,7 @@ class BoardService {
     }
 
     deleteFile(no) {
-        return axios.post(BOARD_API_BASE_URL + "/file/delete/" + no); 
+        return axios.delete(BOARD_API_BASE_URL + "/file/delete/" + no); 
     }
 }
 

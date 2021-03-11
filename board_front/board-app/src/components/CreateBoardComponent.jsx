@@ -128,13 +128,25 @@ class CreateBoardComponent extends Component {
       };
 
     getFile() {
-        if (this.state.no != '_create') {
+        if (this.state.no != '_create' && this.state.files.length > 0) {
             return <h6>○ 기존파일정보</h6>
         }        
     }
 
-    deleteFile () {
-        
+    deleteOneFile (no) {
+        if(window.confirm("정말로 파일을 삭제하시겠습니까?\n삭제된 파일은 복구할 수 없습니다.")) {
+            BoardService.deleteFile(no).then(res => {
+                console.log("delete result => " + JSON.stringify(res));
+                if(res.status == 200) {
+                    alert("파일이 삭제되었습니다.");
+                    BoardService.getFileInfo(this.state.no).then(res => {
+                        this.setState({files: res.data.fileList});
+                    }); 
+                } else {
+                    alert("파일 삭제에 실패했습니다.");
+                }
+            });
+        }
     }
 
     componentDidMount() {
@@ -200,7 +212,7 @@ class CreateBoardComponent extends Component {
                                             bFile =>
                                             <div>
                                                 {bFile.fileNo} : {bFile.oriName}
-                                                <a style={{marginLeft: "10px"}}>X</a>
+                                                <a style={{marginLeft: "10px"}} onClick={() => this.deleteOneFile(bFile.fileNo)}>X</a>
                                             </div>                                     
                                         )
                                     }
