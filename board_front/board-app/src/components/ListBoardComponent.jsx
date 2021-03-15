@@ -10,7 +10,7 @@ class ListBoardComponent extends Component {
         this.state = { 
             p_num : 1,
             paging : {},
-            boards: []
+            boards: [],
         }
 
         this.createBoard = this.createBoard.bind(this);
