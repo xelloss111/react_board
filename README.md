@@ -20,5 +20,6 @@
 - Insert Board Files Data at the same time file upload - complete
 - Insert Board Info Data and Board Files Data - complete
 - Read Board Info Data with Board Files Data - complete (inner axios using responseType : blob)
-- Update Board Info Data with Board Files Data
+- Move to Update Board Page and Board Files Delete - Complete (axios.delete)
+- Update Board Info Data with Board Files Data 
 - User Acoount System Build (TBD)
